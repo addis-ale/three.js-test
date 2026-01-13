@@ -10,12 +10,8 @@ import { InstancedHoverShader } from '../shaders/InstancedHoverShader';
  */
 export class TraceManager {
   private flatTraces: FlatTraces;
-  private scene: THREE.Scene;
-  private copperLayerManager: any;
   
-  constructor(scene: THREE.Scene, copperLayerManager: any) {
-    this.scene = scene;
-    this.copperLayerManager = copperLayerManager;
+  constructor(scene: THREE.Scene, copperLayerManager: unknown) {
     this.flatTraces = new FlatTraces(copperLayerManager, scene, 1000);
   }
 
@@ -108,7 +104,7 @@ export class TraceManager {
   /**
    * Get statistics
    */
-  public getStatistics(): any {
+  public getStatistics(): ReturnType<FlatTraces['getStats']> {
     return this.flatTraces.getStats();
   }
 
@@ -242,7 +238,19 @@ export class TraceManager {
    */
   public batchCreateTraces(specifications: Array<{
     type: 'straight' | 'rectangular' | 'circular' | 'zigzag';
-    params: any;
+    params: {
+      points?: THREE.Vector2[];
+      center?: THREE.Vector2;
+      size?: THREE.Vector2;
+      start?: THREE.Vector2;
+      end?: THREE.Vector2;
+      radius?: number;
+      amplitude?: number;
+      frequency?: number;
+      segments?: number;
+      width?: number;
+      layer?: 'top' | 'bottom';
+    };
   }>): string[] {
     const createdIds: string[] = [];
     
@@ -251,41 +259,49 @@ export class TraceManager {
       
       switch (spec.type) {
         case 'straight':
-          traceId = this.createTraceFromPoints(
-            spec.params.points,
-            spec.params.width,
-            spec.params.layer
-          );
+          if (spec.params.points) {
+            traceId = this.createTraceFromPoints(
+              spec.params.points,
+              spec.params.width,
+              spec.params.layer
+            );
+          }
           break;
           
         case 'rectangular':
-          traceId = this.createRectangularTrace(
-            spec.params.center,
-            spec.params.size,
-            spec.params.width,
-            spec.params.layer
-          );
+          if (spec.params.center && spec.params.size) {
+            traceId = this.createRectangularTrace(
+              spec.params.center,
+              spec.params.size,
+              spec.params.width,
+              spec.params.layer
+            );
+          }
           break;
           
         case 'circular':
-          traceId = this.createCircularTrace(
-            spec.params.center,
-            spec.params.radius,
-            spec.params.width,
-            spec.params.segments,
-            spec.params.layer
-          );
+          if (spec.params.center && spec.params.radius !== undefined) {
+            traceId = this.createCircularTrace(
+              spec.params.center,
+              spec.params.radius,
+              spec.params.width,
+              spec.params.segments,
+              spec.params.layer
+            );
+          }
           break;
           
         case 'zigzag':
-          traceId = this.createZigzagTrace(
-            spec.params.start,
-            spec.params.end,
-            spec.params.amplitude,
-            spec.params.frequency,
-            spec.params.width,
-            spec.params.layer
-          );
+          if (spec.params.start && spec.params.end && spec.params.amplitude !== undefined && spec.params.frequency !== undefined) {
+            traceId = this.createZigzagTrace(
+              spec.params.start,
+              spec.params.end,
+              spec.params.amplitude,
+              spec.params.frequency,
+              spec.params.width,
+              spec.params.layer
+            );
+          }
           break;
       }
       

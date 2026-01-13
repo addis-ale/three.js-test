@@ -1,3 +1,18 @@
+import * as THREE from 'three';
+
+interface MemoryState {
+  timestamp: number;
+  geometries: number;
+  textures: number;
+  triangles: number;
+  drawCalls: number;
+}
+
+interface RendererInfo {
+  memory: { geometries: number; textures: number };
+  render: { triangles: number; calls: number };
+}
+
 /**
  * Memory monitoring utility for stress testing
  * Tracks WebGL memory usage and performance metrics
@@ -51,17 +66,17 @@ export class MemoryMonitor {
   /**
    * Get current memory info
    */
-  public getCurrentMemoryInfo(): any {
-    return this.renderer.info;
+  public getCurrentMemoryInfo(): RendererInfo {
+    return this.renderer.info as unknown as RendererInfo;
   }
 
   /**
    * Get memory usage summary
    */
   public getMemorySummary(): {
-    current: any;
-    peak: any;
-    history: Array<any>;
+    current: RendererInfo;
+    peak: MemoryState;
+    history: Array<MemoryState>;
     trends: {
       geometries: 'increasing' | 'decreasing' | 'stable';
       textures: 'increasing' | 'decreasing' | 'stable';
@@ -71,7 +86,7 @@ export class MemoryMonitor {
     const current = this.getCurrentMemoryInfo();
     const history = this.memoryHistory;
     
-    let peak = { ...current };
+    const peak: MemoryState = { timestamp: 0, geometries: current.memory.geometries, textures: current.memory.textures, triangles: current.render.triangles, drawCalls: current.render.calls };
     history.forEach(state => {
       if (state.geometries > peak.geometries) peak.geometries = state.geometries;
       if (state.textures > peak.textures) peak.textures = state.textures;
@@ -92,7 +107,7 @@ export class MemoryMonitor {
   /**
    * Calculate memory usage trends
    */
-  private calculateTrends(history: Array<any>): {
+  private calculateTrends(history: Array<MemoryState>): {
     geometries: 'increasing' | 'decreasing' | 'stable';
     textures: 'increasing' | 'decreasing' | 'stable';
     triangles: 'increasing' | 'decreasing' | 'stable';

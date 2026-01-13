@@ -1,13 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import * as THREE from 'three';
 import { Engine } from './engine/Engine';
-import { Camera } from './engine/Camera';
-import { Renderer } from './engine/Renderer';
-import { Scene } from './engine/Scene';
 import { Board } from './components/Board';
-import { Pads, PadData } from './components/Pads';
-import { Traces, TraceData } from './components/Traces';
-import { CopperLayerManager } from './engine/CopperLayerManager';
+import { Pads } from './components/Pads';
+import { Traces } from './components/Traces';
 import { SMDPadManager } from './components/SMDPadManager';
 import { TraceManager } from './components/TraceManager';
 import { Serialization } from './utils/Serialization';
@@ -59,7 +55,7 @@ export const PCBViewer: React.FC<PCBViewerProps> = ({
     }
     
     // Add a small delay to ensure canvas is fully ready
-    const initTimeout = setTimeout(() => {
+    setTimeout(() => {
       try {
         console.log('Initializing engine with canvas:', canvas);
         console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);

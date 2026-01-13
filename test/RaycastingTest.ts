@@ -180,7 +180,7 @@ export class RaycastingTest {
       
       // Clear hover
       interaction.clearHoverState();
-      const afterClearInfo = interaction.getHoverInfo();
+      const _afterClearInfo = interaction.getHoverInfo();
       const clearedNotHovering = !interaction.isHovering();
       
       console.log(`Initial state: ${initiallyNotHovering && initialObjectNull && initialInstanceIdNull ? '✅' : '❌'}`);

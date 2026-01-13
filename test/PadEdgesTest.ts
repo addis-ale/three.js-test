@@ -107,10 +107,10 @@ export class PadEdgesTest {
     try {
       const material = BarycentricShader.createMaterial();
       
-      // Test initial state
-      const initialColor = material.uniforms.uEdgeColor.value.clone();
-      const initialWidth = material.uniforms.uEdgeWidth.value;
-      const initialOpacity = material.uniforms.uOpacity.value;
+      // Test initial state (verify they exist, values checked after updates)
+      const _initialColor = material.uniforms.uEdgeColor.value.clone();
+      const _initialWidth = material.uniforms.uEdgeWidth.value;
+      const _initialOpacity = material.uniforms.uOpacity.value;
       
       // Test edge color update
       const newColor = new THREE.Color(0xff0000);

@@ -37,7 +37,7 @@ export class SMDPadTest {
     const success = smdPads.addPad(testPad);
     
     // Verify positioning
-    const expectedZ = this.copperLayerManager.getTopCopperZ();
+    const _expectedZ = this.copperLayerManager.getTopCopperZ();
     const retrievedPad = smdPads.getPad('test_pad_1');
     
     const positionCorrect = retrievedPad?.position.y === 0; // Y should remain 0, Z handled by matrix

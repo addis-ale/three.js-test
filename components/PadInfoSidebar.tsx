@@ -16,8 +16,15 @@ interface PadInfo {
 }
 
 interface PadInfoSidebarProps {
-  interaction: any; // Interaction instance
-  smdPadManager: any; // SMDPadManager instance
+  interaction: {
+    getSelectedObject: () => THREE.Object3D | null;
+    getHoverInfo: () => { object: THREE.Object3D | null; instanceId: number | null };
+    getTransformControls: () => { object: { matrix: THREE.Matrix4 }; addEventListener: (event: string, callback: () => void) => void; removeEventListener: (event: string, callback: () => void) => void } | null;
+  };
+  smdPadManager: {
+    getInstancedMesh: () => THREE.InstancedMesh | null;
+    getAllPads: () => Array<{ id: string; size: THREE.Vector2; type: 'rect' | 'circle' }>;
+  };
 }
 
 export const PadInfoSidebar: React.FC<PadInfoSidebarProps> = ({ interaction, smdPadManager }) => {
@@ -29,7 +36,7 @@ export const PadInfoSidebar: React.FC<PadInfoSidebarProps> = ({ interaction, smd
   /**
    * Calculate surface area for different pad types
    */
-  const calculateSurfaceArea = (padData: any): number => {
+  const calculateSurfaceArea = (padData: { size: THREE.Vector2; type: 'rect' | 'circle' } | null): number => {
     if (!padData) return 0;
     
     const { size, type } = padData;
@@ -212,6 +219,7 @@ export const PadInfoSidebar: React.FC<PadInfoSidebarProps> = ({ interaction, smd
       clearInterval(selectionCheckInterval);
       stopLiveUpdates();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [interaction, smdPadManager]);
 
   /**

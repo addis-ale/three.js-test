@@ -256,7 +256,7 @@ export class PersistenceTest {
       );
       
       // Get stats after clearing
-      const afterClearStats = Serialization.getResourceStats();
+      const _afterClearStats = Serialization.getResourceStats();
       
       // Dispose resources
       Serialization.disposeResources();
@@ -291,7 +291,7 @@ export class PersistenceTest {
     
     try {
       // Track initial memory usage (approximate)
-      const initialResourceCount = Serialization.getResourceStats();
+      const _initialResourceCount = Serialization.getResourceStats();
       
       // Create and destroy multiple boards
       for (let i = 0; i < 10; i++) {

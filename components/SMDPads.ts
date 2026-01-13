@@ -33,7 +33,6 @@ export class SMDPads {
   private tempVector: THREE.Vector3;
   private tempQuaternion: THREE.Quaternion;
   private tempEuler: THREE.Euler;
-  private shaderManager: ShaderManager;
 
   // Geometry cache for different pad types
   private rectangularGeometry!: THREE.PlaneGeometry;
@@ -48,8 +47,8 @@ export class SMDPads {
     this.maxInstances = maxInstances;
     this.padData = new Map();
     
-    // Initialize shader manager for reusable copper materials
-    this.shaderManager = ShaderManager.getInstance();
+    // Initialize shader manager (for potential future use)
+    ShaderManager.getInstance();
     
     // Initialize transformation helpers
     this.matrix = new THREE.Matrix4();

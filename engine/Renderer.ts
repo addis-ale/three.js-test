@@ -6,10 +6,8 @@ import * as THREE from 'three';
  */
 export class Renderer {
   public renderer: THREE.WebGLRenderer;
-  private canvas: HTMLCanvasElement;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.canvas = canvas;
     
     // Check if canvas is valid
     if (!canvas) {

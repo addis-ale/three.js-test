@@ -31,14 +31,12 @@ export class FlatTraces {
   
   private maxInstances: number;
   private instanceCount: number = 0;
-  private copperLayerManager: any; // CopperLayerManager reference
   private scene: THREE.Scene;
   
   // Geometry cache for different trace widths
   private geometryCache: Map<number, THREE.BufferGeometry> = new Map();
   
-  constructor(copperLayerManager: any, scene: THREE.Scene, maxInstances: number = 1000) {
-    this.copperLayerManager = copperLayerManager;
+  constructor(_copperLayerManager: unknown, scene: THREE.Scene, maxInstances: number = 1000) {
     this.scene = scene;
     this.maxInstances = maxInstances;
     

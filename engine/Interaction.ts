@@ -42,7 +42,7 @@ export class Interaction {
     this.updateCursor();
   }
 
-  private onClick(event: MouseEvent): void {
+  private onClick(_event: MouseEvent): void {
     const intersects = this.performRaycast();
     
     if (intersects.length > 0) {
@@ -66,10 +66,10 @@ export class Interaction {
     return this.raycaster.intersectObjects(targetObjects, true);
   }
 
-  private getAllInteractableObjects(): THREE.Object3D[] {
-    // Return stored interactable objects
-    return this.interactableObjects;
-  }
+  // getAllInteractableObjects kept for potential future use
+  // private getAllInteractableObjects(): THREE.Object3D[] {
+  //   return this.interactableObjects;
+  // }
 
   private updateCursor(): void {
     const intersects = this.performRaycast();
@@ -96,9 +96,8 @@ export class Interaction {
     }
   }
 
-  private updateHoverState(object: THREE.Object3D): void {
-    // This method is now handled by updateCursor with instance detection
-  }
+  // updateHoverState now handled by updateCursor with instance detection
+  // private updateHoverState(object: THREE.Object3D): void { }
 
   public clearHoverState(): void {
     if (this.hoveredObject && this.hoveredInstanceId !== null) {
@@ -249,7 +248,7 @@ export class Interaction {
   /**
    * Update pad position in data structure when moved
    */
-  private updatePadPosition(object: THREE.Object3D, instanceId: number, position: THREE.Vector3): void {
+  private updatePadPosition(_object: THREE.Object3D, instanceId: number, position: THREE.Vector3): void {
     // This would update the pad data structure if we had access to it
     // For now, just log the position change
     console.log(`Pad instance ${instanceId} moved to:`, position);
