@@ -45,6 +45,20 @@ interface ResourceTracker {
 }
 
 /**
+ * Interface for components that can have trackable resources
+ */
+interface TrackableComponent {
+  instancedMesh?: THREE.Mesh;
+  edgeMesh?: THREE.Mesh;
+  rectangularGeometry?: THREE.BufferGeometry;
+  circularGeometry?: THREE.BufferGeometry;
+  rectangularEdgeGeometry?: THREE.BufferGeometry;
+  circularEdgeGeometry?: THREE.BufferGeometry;
+  traceMeshes?: Map<string, THREE.Mesh>;
+  geometryCache?: Map<number, THREE.BufferGeometry>;
+}
+
+/**
  * Enhanced Serialization system for PCB boards
  * Handles export/import with full resource management and memory leak prevention
  */
@@ -205,36 +219,20 @@ export class Serialization {
   }
 
   /**
-   * Import legacy trace for backward compatibility
-   */
-  private static importLegacyTrace(data: PCBComponentData, traces: Traces): void {
-    if (data.type !== 'path' || !data.points || !data.width) return;
-
-    const traceData: TraceData = {
-      id: data.id,
-      points: data.points.map(p => new THREE.Vector2(...p)),
-      width: data.width,
-      layer: data.layer
-    };
-
-    traces.addTrace(traceData);
-  }
-
-  /**
    * Clear all components and track resources for disposal
    */
   private static clearBoard(
-    board: Board,
+    _board: Board,
     pads: Pads,
     traces: Traces,
     smdPadManager: SMDPadManager,
     traceManager: TraceManager
   ): void {
     // Track resources before clearing
-    this.trackResources(pads);
-    this.trackResources(traces);
-    this.trackResources(smdPadManager);
-    this.trackResources(traceManager);
+    this.trackResources(pads as unknown as TrackableComponent);
+    this.trackResources(traces as unknown as TrackableComponent);
+    this.trackResources(smdPadManager as unknown as TrackableComponent);
+    this.trackResources(traceManager as unknown as TrackableComponent);
 
     // Clear all legacy pads
     const allPads = pads.getAllPadData();
@@ -258,7 +256,7 @@ export class Serialization {
   /**
    * Track resources for memory leak prevention
    */
-  private static trackResources(component: any): void {
+  private static trackResources(component: TrackableComponent): void {
     if (!component) return;
 
     // Track meshes
@@ -287,10 +285,10 @@ export class Serialization {
 
     // Track materials
     if (component.instancedMesh?.material) {
-      this.resourceTracker.materials.add(component.instancedMesh.material);
+      this.resourceTracker.materials.add(component.instancedMesh.material as THREE.Material);
     }
     if (component.edgeMesh?.material) {
-      this.resourceTracker.materials.add(component.edgeMesh.material);
+      this.resourceTracker.materials.add(component.edgeMesh.material as THREE.Material);
     }
 
     // For TraceManager, track all trace meshes
@@ -378,27 +376,31 @@ export class Serialization {
   /**
    * Validate board data structure with enhanced validation
    */
-  public static validateBoardData(data: any): data is PCBBoardData {
+  public static validateBoardData(data: unknown): data is PCBBoardData {
     if (!data || typeof data !== 'object') return false;
     
+    const obj = data as Record<string, unknown>;
+    
     // Check board structure
-    if (!data.board || typeof data.board !== 'object') return false;
-    if (typeof data.board.width !== 'number' || 
-        typeof data.board.height !== 'number' || 
-        typeof data.board.thickness !== 'number') return false;
+    if (!obj.board || typeof obj.board !== 'object') return false;
+    const board = obj.board as Record<string, unknown>;
+    if (typeof board.width !== 'number' || 
+        typeof board.height !== 'number' || 
+        typeof board.thickness !== 'number') return false;
     
     // Check components array
-    if (!Array.isArray(data.components)) return false;
+    if (!Array.isArray(obj.components)) return false;
     
     // Validate each component
-    for (const component of data.components) {
+    for (const component of obj.components) {
       if (!this.validateComponentData(component)) return false;
     }
     
     // Validate metadata if present
-    if (data.metadata) {
-      if (typeof data.metadata !== 'object') return false;
-      if (data.metadata.version && typeof data.metadata.version !== 'string') return false;
+    if (obj.metadata) {
+      if (typeof obj.metadata !== 'object') return false;
+      const metadata = obj.metadata as Record<string, unknown>;
+      if (metadata.version && typeof metadata.version !== 'string') return false;
     }
     
     return true;
@@ -407,30 +409,32 @@ export class Serialization {
   /**
    * Validate individual component data with enhanced validation
    */
-  private static validateComponentData(data: any): data is PCBComponentData {
+  private static validateComponentData(data: unknown): data is PCBComponentData {
     if (!data || typeof data !== 'object') return false;
     
+    const obj = data as Record<string, unknown>;
+    
     // Required fields
-    if (typeof data.id !== 'string' || 
-        typeof data.type !== 'string' || 
-        !Array.isArray(data.pos) || 
-        data.pos.length !== 3 ||
-        typeof data.layer !== 'string') return false;
+    if (typeof obj.id !== 'string' || 
+        typeof obj.type !== 'string' || 
+        !Array.isArray(obj.pos) || 
+        obj.pos.length !== 3 ||
+        typeof obj.layer !== 'string') return false;
     
     // Validate position
-    if (!data.pos.every((p: any) => typeof p === 'number')) return false;
+    if (!obj.pos.every((p: unknown) => typeof p === 'number')) return false;
     
     // Validate layer
-    if (data.layer !== 'top' && data.layer !== 'bottom') return false;
+    if (obj.layer !== 'top' && obj.layer !== 'bottom') return false;
     
     // Type-specific validation
-    if (data.type.startsWith('smd_')) {
-      if (!Array.isArray(data.size) || data.size.length !== 2) return false;
-      if (!data.size.every((s: any) => typeof s === 'number')) return false;
-    } else if (data.type === 'path') {
-      if (typeof data.width !== 'number') return false;
-      if (!Array.isArray(data.points) || data.points.length < 2) return false;
-      if (!data.points.every((p: any) => Array.isArray(p) && p.length === 2)) return false;
+    if (obj.type.startsWith('smd_')) {
+      if (!Array.isArray(obj.size) || obj.size.length !== 2) return false;
+      if (!obj.size.every((s: unknown) => typeof s === 'number')) return false;
+    } else if (obj.type === 'path') {
+      if (typeof obj.width !== 'number') return false;
+      if (!Array.isArray(obj.points) || obj.points.length < 2) return false;
+      if (!obj.points.every((p: unknown) => Array.isArray(p) && p.length === 2)) return false;
     } else {
       return false; // Invalid type
     }

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { SMDPads, SMDDPadData } from './SMDPads';
+import { SMDDPadData } from './SMDPads';
 
 /**
  * Factory for creating sample SMD pads

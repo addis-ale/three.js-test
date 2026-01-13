@@ -232,7 +232,7 @@ export class ReactSidebarSyncTest {
       }
       
       // Simulate position changes during dragging
-      const initialPosition = new THREE.Vector3(0, 0, 0);
+      const _initialPosition = new THREE.Vector3(0, 0, 0);
       const testPositions = [
         new THREE.Vector3(5, 0, 0),
         new THREE.Vector3(10, 0, 5),
@@ -394,7 +394,7 @@ export class ReactSidebarSyncTest {
       const updateStartTime = performance.now();
       for (let i = 0; i < 10; i++) {
         interaction.selectObject(smdPads.instancedMesh, i);
-        const position = getInstanceWorldPosition(smdPads, i);
+        const _position = getInstanceWorldPosition(smdPads, i);
         
         // Simulate TransformControls change
         const transformControls = interaction.getTransformControls();

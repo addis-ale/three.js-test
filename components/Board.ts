@@ -7,9 +7,9 @@ import { CopperLayerManager } from '../engine/CopperLayerManager';
  * Implements Z-fighting prevention and realistic PCB appearance
  */
 export class Board {
-  public mesh: THREE.Mesh;
-  public topCopperLayer: THREE.Object3D;
-  public bottomCopperLayer: THREE.Object3D;
+  public mesh!: THREE.Mesh;
+  public topCopperLayer!: THREE.Object3D;
+  public bottomCopperLayer!: THREE.Object3D;
   
   private width: number;
   private height: number;

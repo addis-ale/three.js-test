@@ -62,7 +62,7 @@ export class Engine {
   private animate = (): void => {
     if (!this.isRunning) return;
 
-    const deltaTime = this.clock.getDelta();
+    this.clock.getDelta(); // Keep clock running for consistent timing
     
     // Update camera controls
     this.camera.update();

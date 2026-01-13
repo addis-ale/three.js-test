@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { CopperShader } from '../shaders/CopperShader';
 import { ShaderManager } from '../shaders/ShaderManager';
 import { SMDPads, SMDDPadData } from '../components/SMDPads';
 import { CopperLayerManager } from '../engine/CopperLayerManager';
@@ -64,9 +63,9 @@ export class CopperShaderTest {
     try {
       const material = this.shaderManager.createCopperMaterial();
       
-      // Test initial state
-      const initialHovered = material.uniforms.uHovered.value;
-      const initialSelected = material.uniforms.uSelected.value;
+      // Test initial state (verify they exist, values checked implicitly)
+      const _initialHovered = material.uniforms.uHovered.value;
+      const _initialSelected = material.uniforms.uSelected.value;
       
       // Test hover state update
       this.shaderManager.setHovered(material, true);
